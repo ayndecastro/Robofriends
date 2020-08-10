@@ -18,9 +18,9 @@ const CardList = ({ robots }) => {
   return (
     <div className={classes.root}>
       <Grid container spacing={3}>
-        {robots.map((user, i) => {
+        {robots.map((user, key) => {
           return (
-            <Grid item xs={3}>
+            <Grid item xs={3} key={key}>
               <Paper className={classes.paper}>
                 <Card
                   id={user.id}

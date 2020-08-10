@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
-import CardList from './Robots/CardList';
-import { robots } from './Robots/robots';
-import SearchBox from './SearchBox/SearchBox';
+import CardList from './Components/Robots/CardList';
+// import { robots } from './Components/Robots/robots';
+import SearchBox from './Components/SearchBox/SearchBox';
 import { Typography, makeStyles } from '@material-ui/core';
+import Scroll from './Components/Scroll/scroll';
 
-const useStyle = makeStyles((theme) => ({
+const useStyles = makeStyles((theme) => ({
   title: {
     fontFamily: 'SEGA LOGO FONT',
     margin: theme.spacing(4),
@@ -15,9 +16,23 @@ const useStyle = makeStyles((theme) => ({
 }));
 
 function App() {
-  const classes = useStyle();
-  const [state, setstate] = useState({ robots: robots });
+  const classes = useStyles();
+  const [state, setState] = useState({ robots: [] });
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  const fetchMyRobots = async () => {
+    const res = await fetch('https://jsonplaceholder.typicode.com/users');
+    const data = await res.json();
+    const robots = data;
+
+    setState({ robots: robots });
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMyRobots();
+  }, []);
 
   const onSearchChange = (e) => {
     setSearch(e.target.value);
@@ -33,7 +48,9 @@ function App() {
         robofriends
       </Typography>
       <SearchBox searchChange={onSearchChange} />
-      <CardList robots={filteredRobots} />
+      <Scroll>
+        {!loading ? <CardList robots={filteredRobots} /> : <h1>Loading...</h1>}
+      </Scroll>
     </div>
   );
 }
